@@ -80,9 +80,16 @@ const verifyotp=async (req,res)=>{
       process.env.ACCESS_TOKEN_SECRET,
       { expiresIn: '7h' }
     );
+
     user.accesstoken=accessToken;
     await user.save();
-    return res.status(200).json({ success: true, message: "Login successful", accessToken });
+    const userResponse = {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      isVerified: user.isVerified
+  };
+    return res.status(200).json({ success: true, message: "Login successful", accessToken ,user:userResponse});
 
   } catch (err) {
     console.log("An error occurred", err);
