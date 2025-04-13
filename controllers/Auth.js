@@ -1,5 +1,6 @@
 import { SendverificationCode, WelcomeEmail } from "../middlewares/Email.js";
 import usermodel from "../models/User.js";
+import adminmodel from "../models/Admin.js";
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken';
 import { authenticatetoken } from "../utilities.js";
@@ -15,24 +16,22 @@ const register=async (req,res)=>{
     if(userexists){
       return res.status(400).json({success:false, message:"User already exists"});
     }
-
-    const hashedpassword=await bcrypt.hash(password,10);
-    const verificationCode =Math.floor(100000 + Math.random() * 900000).toString();
-
-    const user=new usermodel({
-      email,
-      password:hashedpassword,
-      name,
-      verificationCode,
-      phone,
-    })
-    await user.save();
-    return res.status(200).json({ success: true, message: "User registered"});
+      const hashedpassword=await bcrypt.hash(password,10);
+      const verificationCode =Math.floor(100000 + Math.random() * 900000).toString();
+  
+      const user=new usermodel({
+        email,
+        password:hashedpassword,
+        name,
+        verificationCode,
+        phone,
+      })
+      await user.save();
+      return res.status(200).json({ success: true, message: "User registered"});
 
   }catch(err){
     console.log("an error occured",err);
     return res.status(500).json({success:false, message:"Internsal server error"});
-
   }
 }
 
