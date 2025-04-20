@@ -4,6 +4,7 @@ import cors from 'cors';
 import dbcon from './libs/db.js';
 import Authroutes from './routes/Auth.routes.js';
 import Adminauthroutes from './routes/Adminauth.routes.js'
+import bookingRoutes from "./routes/booking.js"; 
 dotenv.config();
 
 
@@ -19,6 +20,7 @@ dbcon();
 // Use routes
 app.use('/auth', Authroutes);
 app.use('/adminauth', Adminauthroutes);
+app.use("/bookings", bookingRoutes);
 
 // Set the port 
 const PORT = process.env.PORT || 5000;
