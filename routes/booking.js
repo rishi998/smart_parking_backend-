@@ -1,6 +1,5 @@
 import express from "express";
 import Booking from "../models/bookingModel.js"; // Adjust path if needed
-
 const router = express.Router();
 
 router.post("/book", async (req, res) => {
