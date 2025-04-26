@@ -7,30 +7,49 @@ router.post("/book", async (req, res) => {
     const {
       username,
       area,
+      address,
       level,
       slotNumber,
       dateOfBooking,
       timeOfBooking,
       accessToken,
+      areaId
     } = req.body;
 
+    // Create composite ID
+    const bookingId = `${areaId}-${slotNumber.replace(' ', '-')}-${new Date(dateOfBooking).toISOString().split('T')[0]}`;
+
     const booking = new Booking({
+      _id: bookingId,  // Use our custom ID
       username,
       area,
+      address,
       level,
       slotNumber,
       dateOfBooking,
       timeOfBooking,
       accessToken,
+      areaId  // Store area reference
     });
 
     const savedBooking = await booking.save();
     res.status(201).json({ success: true, booking: savedBooking });
+    
   } catch (error) {
     console.error("Booking Error:", error);
-    res.status(500).json({ success: false, message: "Internal Server Error" });
+    if (error.code === 11000) {
+      return res.status(400).json({ 
+        success: false, 
+        message: "This spot is already booked for the selected date" 
+      });
+    }
+    res.status(500).json({ 
+      success: false, 
+      message: "Internal Server Error" 
+    });
   }
 });
+
 router.get("/:username", async (req, res) => {
   try {
     const { username } = req.params;
@@ -66,6 +85,32 @@ router.get('/bookings/:username', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to fetch bookings' });
+  }
+});
+router.get('/booked-slots/:areaId/:level', async (req, res) => {
+  try {
+    const { areaId, level } = req.params;
+    
+    // Find all bookings for this area and level
+    const bookings = await Booking.find({
+      areaId: areaId,
+      level: level,
+      dateOfBooking: { $gte: new Date() }
+    });
+    console.log(bookings)
+
+    // Extract just the slot numbers
+    const bookedSlots = bookings.map(booking => booking.slotNumber);
+    
+    res.status(200).json({ 
+      success: true, 
+      bookedSlots 
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      success: false, 
+      message: 'Error fetching booked slots' 
+    });
   }
 });
 

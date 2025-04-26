@@ -1,4 +1,3 @@
-// models/Area.js
 import mongoose from "mongoose";
 const areaSchema = new mongoose.Schema({
   areaName: { type: String, required: true },

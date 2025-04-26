@@ -1,6 +1,7 @@
 import express from "express";
 import Area from '../models/Areas.js' // Adjust path as needed
 import jwt from "jsonwebtoken";
+import Booking from "../models/bookingModel.js";
 
 const router = express.Router();
 
@@ -85,6 +86,42 @@ router.get("/allareas", async (req, res) => {
   } catch (error) {
     console.error("Fetch All Error:", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+});
+
+
+router.get("/availability/:areaName", async (req, res) => {
+  try {
+    const { areaName } = req.params;
+
+    // 1. Find the area by name
+    const area = await Area.findOne({ areaName });
+    if (!area) {
+      return res.status(404).json({ success: false, message: "Area not found" });
+    }
+
+    // 2. Count bookings with matching area name
+    const bookedSlots = await Booking.countDocuments({ 
+      area:area.areaName,
+    });
+
+    // 3. Calculate slots
+    const totalSlots = area.slotsPerLevel.reduce((sum, slots) => sum + slots, 0);
+    const availableSlots = totalSlots - bookedSlots;
+
+    res.status(200).json({
+      success: true,
+      data: {
+        areaName: area.areaName,
+        totalSlots,
+        bookedSlots,
+        availableSlots
+      }
+    });
+
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ success: false, message: error.message });
   }
 });
 
