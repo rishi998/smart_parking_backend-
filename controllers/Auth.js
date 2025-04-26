@@ -116,5 +116,38 @@ const verifyemail=async(req,res)=>{
     return res.status(500).json({success:false, message:err.message});
   }
 }
+const getAllUsers = async (req, res) => {
+  try {
+    // Fetch all users from the database
+    const users = await usermodel.find({}).select('-password -verificationCode -__v');
+    
+    // Format the response data
+    const formattedUsers = users.map((user, index) => ({
+      id: index + 1,
+      _id: user._id,
+      name: user.name || 'N/A',
+      email: user.email,
+      phone: user.phone || 'N/A',
+      isVerified: user.isVerified || false,
+      verificationCode: user.verificationCode || 'N/A',
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt
+    }));
 
-export {register,verifyemail,login,verifyotp};
+    return res.status(200).json({ 
+      success: true, 
+      count: formattedUsers.length,
+      users: formattedUsers 
+    });
+
+  } catch (err) {
+    console.error("Error fetching users:", err);
+    return res.status(500).json({ 
+      success: false, 
+      message: "Internal server error",
+      error: err.message 
+    });
+  }
+}
+
+export {register,verifyemail,login,verifyotp,getAllUsers};
