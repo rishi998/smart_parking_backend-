@@ -6,7 +6,7 @@ Authroutes.post("/register",register)
 Authroutes.post("/verifyemail",verifyemail);
 Authroutes.post("/login",login);
 Authroutes.post("/verifyotp",verifyotp);
-Authroutes.get("/getallusers",verifyotp);
+Authroutes.get("/getallusers",getAllUsers);
 export default Authroutes;
 
 

@@ -22,7 +22,7 @@ const userschema=mongoose.Schema({
   },
   isverified:{
     type:Boolean,
-    default:false,
+    default:true,
   },
   verificationCode:String,
   accesstoken:{
@@ -30,7 +30,7 @@ const userschema=mongoose.Schema({
     unique:true,
     // required:false;
   }
-},{timestamp:true});
+},{timestamps:true});
 
 const usermodel=mongoose.model("user",userschema);
 export default usermodel;

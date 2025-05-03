@@ -8,6 +8,8 @@ export const transporter = nodemailer.createTransport({
     pass: "hohm iqka cjaj gfmz",
   },
 });
+
+
 // const sendemail=async ()=>{
 //   try{
 //     const info = await transporter.sendMail({

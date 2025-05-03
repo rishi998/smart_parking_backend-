@@ -119,7 +119,7 @@ const verifyemail=async(req,res)=>{
 const getAllUsers = async (req, res) => {
   try {
     // Fetch all users from the database
-    const users = await usermodel.find({}).select('-password -verificationCode -__v');
+    const users = await usermodel.find({}, { password: 0, verificationCode: 0 });
     
     // Format the response data
     const formattedUsers = users.map((user, index) => ({
@@ -128,7 +128,7 @@ const getAllUsers = async (req, res) => {
       name: user.name || 'N/A',
       email: user.email,
       phone: user.phone || 'N/A',
-      isVerified: user.isVerified || false,
+      isVerified: user.isverified || false,
       verificationCode: user.verificationCode || 'N/A',
       createdAt: user.createdAt,
       updatedAt: user.updatedAt
